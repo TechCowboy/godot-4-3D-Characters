@@ -13,7 +13,7 @@ options_values = PackedStringArray("Default:default", "Happy:happy", "Dizzy:dizz
 
 [resource]
 script = ExtResource("2_mcau0")
-name = "GDbot"
+name = "GDBot"
 scene_path = "res://addons/gdquest_gdbot/gdbot_skin.tscn"
 vignette = ExtResource("3_0e4oe")
 scale_compensation = 0.65

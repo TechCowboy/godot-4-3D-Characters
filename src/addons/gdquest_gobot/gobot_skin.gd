@@ -24,7 +24,9 @@ signal stepped
 
 @onready var _animation_tree: AnimationTree = %AnimationTree
 @onready var _state_machine: AnimationNodeStateMachinePlayback = _animation_tree.get("parameters/StateMachine/playback")
-@onready var _walk_run_blend_position: String = "parameters/StateMachine/Move/blend_position"
+@onready var _walk_run_blend_amount := "parameters/StateMachine/BlendTree/WalkRunBlending/blend_amount"
+@onready var _walk_run_ratio := _animation_tree.get_animation("walk").length / _animation_tree.get_animation("run").length
+@onready var _step_time_scale := "parameters/StateMachine/BlendTree/StepTimeScale/scale"
 
 @onready var _flip_shot_path := "parameters/FlipShot/request"
 @onready var _hurt_shot_path := "parameters/HurtShot/request"
@@ -39,6 +41,7 @@ signal stepped
 func _ready() -> void:
 	walk_run_blending = walk_run_blending
 	is_blinking = is_blinking
+	stepped.connect(print.bind("ST"))
 
 	_blink_timer.timeout.connect(
 		func() -> void:
@@ -68,10 +71,11 @@ func set_blinking(new_is_blinking: bool) -> void:
 
 
 func set_walk_run_blending(value: float) -> void:
-	walk_run_blending = value
+	walk_run_blending = clampf(value, 0.0, 1.0)
 	if not is_node_ready():
 		return
-	_animation_tree.set(_walk_run_blend_position, walk_run_blending)
+	_animation_tree.set(_walk_run_blend_amount, walk_run_blending)
+	_animation_tree.set(_step_time_scale, lerpf(1.0, _walk_run_ratio, walk_run_blending))
 
 
 ## Sets the model to a neutral, action-free state.
